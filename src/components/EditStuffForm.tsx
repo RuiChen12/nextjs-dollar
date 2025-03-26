@@ -9,7 +9,6 @@ import { EditStuffSchema } from '@/lib/validationSchemas';
 import { editStuff } from '@/lib/dbActions';
 
 const onSubmit = async (data: Stuff) => {
-  // console.log(`onSubmit data: ${JSON.stringify(data, null, 2)}`);
   await editStuff(data);
   swal('Success', 'Your item has been updated', 'success', {
     timer: 2000,
@@ -25,7 +24,6 @@ const EditStuffForm = ({ stuff }: { stuff: Stuff }) => {
   } = useForm<Stuff>({
     resolver: yupResolver(EditStuffSchema),
   });
-  // console.log(stuff);
 
   return (
     <Container className="py-3">
@@ -38,6 +36,7 @@ const EditStuffForm = ({ stuff }: { stuff: Stuff }) => {
             <Card.Body>
               <Form onSubmit={handleSubmit(onSubmit)}>
                 <input type="hidden" {...register('id')} value={stuff.id} />
+                <input type="hidden" {...register('owner')} value={stuff.owner} />
                 <Form.Group>
                   <Form.Label>Name</Form.Label>
                   <input
@@ -73,7 +72,17 @@ const EditStuffForm = ({ stuff }: { stuff: Stuff }) => {
                   </select>
                   <div className="invalid-feedback">{errors.condition?.message}</div>
                 </Form.Group>
-                <input type="hidden" {...register('owner')} value={stuff.owner} />
+                <Form.Group>
+                  <Form.Label>Value</Form.Label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    {...register('value')}
+                    defaultValue={stuff.value}
+                    className={`form-control ${errors.value ? 'is-invalid' : ''}`}
+                  />
+                  <div className="invalid-feedback">{errors.value?.message}</div>
+                </Form.Group>
                 <Form.Group className="form-group">
                   <Row className="pt-3">
                     <Col>

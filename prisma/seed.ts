@@ -22,7 +22,6 @@ async function main() {
         role,
       },
     });
-    // console.log(`  Created user: ${user.email} with role: ${user.role}`);
   });
   config.defaultData.forEach(async (data, index) => {
     let condition: Condition = 'good';
@@ -30,7 +29,7 @@ async function main() {
       condition = 'poor';
     } else if (data.condition === 'excellent') {
       condition = 'excellent';
-    } else {
+    } else if (data.condition === 'fair') {
       condition = 'fair';
     }
     console.log(`  Adding stuff: ${data.name} (${data.owner})`);
@@ -42,6 +41,7 @@ async function main() {
         quantity: data.quantity,
         owner: data.owner,
         condition,
+        value: data.value ?? 0,
       },
     });
   });

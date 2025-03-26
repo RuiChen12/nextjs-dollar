@@ -10,8 +10,13 @@ import { addStuff } from '@/lib/dbActions';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { AddStuffSchema } from '@/lib/validationSchemas';
 
-const onSubmit = async (data: { name: string; quantity: number; owner: string; condition: string }) => {
-  // console.log(`onSubmit data: ${JSON.stringify(data, null, 2)}`);
+const onSubmit = async (data: {
+  name: string;
+  quantity: number;
+  owner: string;
+  condition: string;
+  value: number;
+}) => {
   await addStuff(data);
   swal('Success', 'Your item has been added', 'success', {
     timer: 2000,
@@ -20,8 +25,8 @@ const onSubmit = async (data: { name: string; quantity: number; owner: string; c
 
 const AddStuffForm: React.FC = () => {
   const { data: session, status } = useSession();
-  // console.log('AddStuffForm', status, session);
   const currentUser = session?.user?.email || '';
+
   const {
     register,
     handleSubmit,
@@ -30,9 +35,11 @@ const AddStuffForm: React.FC = () => {
   } = useForm({
     resolver: yupResolver(AddStuffSchema),
   });
+
   if (status === 'loading') {
     return <LoadingSpinner />;
   }
+
   if (status === 'unauthenticated') {
     redirect('/auth/signin');
   }
@@ -56,6 +63,7 @@ const AddStuffForm: React.FC = () => {
                   />
                   <div className="invalid-feedback">{errors.name?.message}</div>
                 </Form.Group>
+
                 <Form.Group>
                   <Form.Label>Quantity</Form.Label>
                   <input
@@ -65,9 +73,13 @@ const AddStuffForm: React.FC = () => {
                   />
                   <div className="invalid-feedback">{errors.quantity?.message}</div>
                 </Form.Group>
+
                 <Form.Group>
                   <Form.Label>Condition</Form.Label>
-                  <select {...register('condition')} className={`form-control ${errors.condition ? 'is-invalid' : ''}`}>
+                  <select
+                    {...register('condition')}
+                    className={`form-control ${errors.condition ? 'is-invalid' : ''}`}
+                  >
                     <option value="excellent">Excellent</option>
                     <option value="good">Good</option>
                     <option value="fair">Fair</option>
@@ -75,7 +87,20 @@ const AddStuffForm: React.FC = () => {
                   </select>
                   <div className="invalid-feedback">{errors.condition?.message}</div>
                 </Form.Group>
+
+                <Form.Group>
+                  <Form.Label>Value</Form.Label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    {...register('value')}
+                    className={`form-control ${errors.value ? 'is-invalid' : ''}`}
+                  />
+                  <div className="invalid-feedback">{errors.value?.message}</div>
+                </Form.Group>
+
                 <input type="hidden" {...register('owner')} value={currentUser} />
+
                 <Form.Group className="form-group">
                   <Row className="pt-3">
                     <Col>
